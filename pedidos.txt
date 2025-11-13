@@ -1,2 +1,4 @@
 teste,
 a,Coca Zero Plus;50;Hambúrguer Artesanal;100
+jorge,Batata Frita Gourmet;75
+hihihoho,Coca Zero Plus;50
