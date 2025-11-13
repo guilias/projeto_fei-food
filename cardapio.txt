@@ -1,0 +1,3 @@
+Hambúrguer,100
+Coca Zero,50
+Batata Frita,75
