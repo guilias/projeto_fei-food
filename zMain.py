@@ -5,7 +5,8 @@ usuario = 0
 menu = {
     1: "Novo pedido",
     2: "Cardápio",
-    3: "Avaliar",
+    3: "Avaliar um pedido",
+    4: "Ver avaliações",
     0: "Desconectar-se"
 }
 
@@ -52,6 +53,9 @@ def main():
         # Avaliar um pedido finalizado
         elif escolha == 3:
             avaliar()
+
+        elif escolha == 4:
+            verAvaliacoes()
 
         # Sair do "aplicativo"
         elif escolha == 0:
@@ -191,7 +195,6 @@ def novoPedido():
                     itensFormatados = ";".join(carrinho)
                     pedidos.write(f"\n{usuario},{itensFormatados}")
                 print("\nPedido finalizado com sucesso!")
-
             return
 
         # Cancela pedido e retorna ao menu principal
@@ -209,8 +212,57 @@ def verCardapio():
         print(f"{id}. {alimento} - R${valor}")
 
 def avaliar():
-    pass
+    temPedido = False
+    with open("pedidos.txt", "r", encoding="utf-8") as pedidos:
+        pedidos.seek(0)
+        for linha in pedidos:
+            partes = linha.strip().split(",")
+            if partes and partes[0].lower() == usuario.lower():
+                temPedido = True
+                break
 
+    if not temPedido:
+        print("\nVocê não possui pedidos finalizados para avaliar.\n")
+        return
+    
+    # Caso o usuário possua pedidos realizados, inicia a avaliação.
+    print(f"\nCerto, {usuario}, vamos registrar a sua avaliação!")
+
+    nota = 0
+    while True:
+        notaUsuario = int(input("Digite sua nota (de 1 à 5): "))
+        if 1 <= notaUsuario <= 5:
+            nota = notaUsuario
+            break
+        else:
+            print("\nNota inválida. Tente novamente.")
+    
+    comentario = input("Digite seu comentário: ")
+    if not comentario:
+        comentario = "Nenhum comentário."
+    
+    # Salva a avaliação
+    with open("avaliacoes.txt", "a", encoding="utf-8") as avaliacoes:
+        # Formato: usuario,nota,comentario
+        avaliacoes.write(f"{usuario},{nota},{comentario}\n")
+    print("\nAvaliação registrada com sucesso!")
+
+def verAvaliacoes():
+    print("AVALIAÇÕES FEI-FOOD:")
+    with open("avaliacoes.txt", "r", encoding="utf-8") as avaliacoes:
+        avaliacoes.seek(0) # Vai para o início para ler
+        linhas = avaliacoes.readlines()
+        if not linhas:
+            print("Ainda não há nenhuma avaliação registrada.")
+        
+        for linha in linhas:
+            partes = linha.strip().split(",", 2)
+            
+            if len(partes) == 3:
+                nome, nota, comentario = partes
+                print(f"\nUsuário: {nome}")
+                print(f"Nota: {nota}/5")
+                print(f"Comentário: {comentario}\n")
 
 # Chamada da função principal, que encadeia um chamado para todas as outras, a depender das entradas do usuário.
 main()
