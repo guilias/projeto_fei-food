@@ -40,12 +40,20 @@ def main():
     exibirTelaInicial()
     while login == True:
         escolha = exibirMenu()
+        # Fazer novo pedido
         if escolha == 1:
             novoPedido()
+        
+        # Visualizar cardápio
         elif escolha == 2:
             verCardapio()
+            input("\nDigite qualquer tecla para continuar: ")
+
+        # Avaliar um pedido finalizado
         elif escolha == 3:
             avaliar()
+
+        # Sair do "aplicativo"
         elif escolha == 0:
             login = False
             usuario = 0
@@ -62,8 +70,10 @@ def exibirTelaInicial():
         for opcao, descricao in telaInicial.items():
             print(f"{opcao} - {descricao}")
         escolha = int(input("\nDigite a opção desejada: "))
+        # Iniciar sessão
         if escolha == 1:
             entrar()
+        # Criar novo usuário
         elif escolha == 2:
             cadastrar()
         else:
@@ -124,51 +134,81 @@ def exibirMenu():
 # Abaixo, funções que fazem parte do MENU PRINCIPAL:
 
 def novoPedido():
-    print("\nNOVO PEDIDO:")
-    for opcao, descricao in novoPedidoMenu.items():
-        print(f"{opcao} - {descricao}")
-    escolha = int(input("\nDigite a opção desejada: "))
-    if escolha == 1:
-        pass
-    elif escolha == 2:
-        pass
-    elif escolha == 3:
-        pass
-    elif escolha == 4:
-        pass
-    elif escolha == 0:
-        return
-    else:
-        print("\nERRO! Opção inválido. Tente novamente.\n")
+    carrinho = [] # Define uma lista vazia. Os itens serão armazenados aqui!
+    while True:
+        print("\nNOVO PEDIDO:")
+        for opcao, descricao in novoPedidoMenu.items():
+            print(f"{opcao} - {descricao}")
+        escolha = int(input("\nDigite a opção desejada: "))
+        
+        # Adiciona item ao pedido 
+        if escolha == 1: 
+            verCardapio()
+            
+            escolhaCardapio = int(input("\nEscolha o item que deseja adicionar ao carrinho: "))
 
+            if escolhaCardapio in cardapio:
+                alimento, valor = cardapio[escolhaCardapio]
+                carrinho.append(f"{alimento};{valor}")
+                print(f"\nItem {escolhaCardapio} adicionado ao carrinho!")
+                print(carrinho)
+            else:
+                print("\nOpção inválida. Retornando ao menu de pedidos...")
 
-    with open("pedidos.txt", "a", encoding="utf-8"):
-    # escrevendo
-        pass
+        # Remove item do pedido
+        elif escolha == 2:
+            if not carrinho:
+                print("\nO carrinho já está vazio! Não há o que remover.")
+                continue
+            else:
+                print("\nSeu carrinho até agora:")
+                for i in range(len(carrinho)):
+                    alimento, valor = carrinho[i].split(';')
+                    print(f"{i + 1}. {alimento} (R${valor})")
+                removerItem = int(input("\nDigite o número do item que quer remover: "))
+
+                # Primeiro, verifica se a entrada do usuário é PELO MENOS 1, depois, se essa entrada NÃO é maior que o número de itens
+                if 1 <= removerItem <= len(carrinho):
+                    itemRemovido = carrinho.pop(removerItem - 1) # Para a máquina, a lista começa em zero, por isso a subtração. 
+                    print(f"\nO item '{itemRemovido.split(';')[0]}' foi removido do carrinho.")
+                else:
+                    print("\nNúmero inválido.")
+
+        # Visualiza iteNS no carrinho
+        elif escolha == 3:
+            print("\nSeu carrinho até agora:")
+            for i in range(len(carrinho)):
+                alimento, valor = carrinho[i].split(';')
+                print(f"{i + 1}. {alimento} (R${valor})")
+
+        # Finaliza pedido e retorna ao menu principal
+        elif escolha == 4:
+            if not carrinho:
+                print("\nO carrinho está vazio. Adicione itens à ele, ou cancele o pedido para continuar.")
+                continue
+            else:
+                with open("pedidos.txt", "a", encoding="utf-8") as pedidos:
+                    itensFormatados = ";".join(carrinho)
+                    pedidos.write(f"\n{usuario},{itensFormatados}")
+                print("\nPedido finalizado com sucesso!")
+
+            return
+
+        # Cancela pedido e retorna ao menu principal
+        elif escolha == 0:
+            return
+        
+        # Caso a opção desejada não esteja no menu:
+        else:
+            print("\nERRO! Opção inválido. Tente novamente.\n")
+
 
 def verCardapio():
     print("\nCARDÁPIO:")
     for id, (alimento, valor) in cardapio.items():
         print(f"{id}. {alimento} - R${valor}")
-        input("\nDigite qualquer tecla para continuar: ")
 
 def avaliar():
-    pass
-
-# !!!
-# !!!
-# Abaixo, funções que fazem parte do MENU PARA NOVOS PEDIDOS:
-
-def adicionarItem():
-    pass
-
-def removerItem():
-    pass
-
-def verCarrinho():
-    pass
-
-def finalizarCompra():
     pass
 
 
